@@ -1,30 +1,23 @@
+from garden_hoses import min_cost_connect
 import heapq
-import importlib.util, pathlib
-
-ROOT = pathlib.Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("main", ROOT / "garden_hoses.py")
-main = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(main)
-min_cost_connect = main.min_cost_connect
 
 def ref_cost(arr):
-    if not arr or len(arr) == 1:
-        return 0
     h = list(arr)
     heapq.heapify(h)
     total = 0
     while len(h) > 1:
-        a = heapq.heappop(h); b = heapq.heappop(h)
-        s = a + b
-        total += s
-        heapq.heappush(h, s)
+        a = heapq.heappop(h)
+        b = heapq.heappop(h)
+        total += a + b
+        heapq.heappush(h, a + b)
     return total
 
-# --- normal tests (4) ---
+# --- normal tests ---
 def test_small_known_1():
     assert min_cost_connect([1,2,3,4]) == 19
 
 def test_small_known_2():
-    assert min_cost_connect([5,2,4]) == 18
+    assert min_cost_connect([5,2,4]) == 17  # corrected
 
 def test_small_known_3():
     assert min_cost_connect([8,4,6,12]) == 58
@@ -32,7 +25,7 @@ def test_small_known_3():
 def test_small_known_4():
     assert min_cost_connect([20,4,8,2]) == 54
 
-# --- edge cases (3) ---
+# --- edge cases ---
 def test_empty():
     assert min_cost_connect([]) == 0
 
@@ -42,7 +35,7 @@ def test_single():
 def test_all_ones():
     assert min_cost_connect([1,1,1,1]) == 8
 
-# --- more-complex (3) ---
+# --- more complex ---
 def test_descending_many():
     arr = [10,9,8,7,6]
     assert min_cost_connect(arr) == ref_cost(arr)
